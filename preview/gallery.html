@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Warp Type — dev gallery</title>
+<style>
+  body { font: 13px/1.5 -apple-system, Inter, sans-serif; margin: 24px; background: #fafafa; color: #222; }
+  h1 { font-size: 18px; margin-bottom: 4px; }
+  h2 { font-size: 13px; margin: 24px 0 8px; color: #666; font-weight: 600; }
+  #checks { margin: 12px 0 20px; padding: 10px 14px; border-radius: 8px; white-space: pre-line; }
+  #checks.pass { background: #e6f6ec; color: #1a7f3c; }
+  #checks.fail { background: #fdecea; color: #b3261e; }
+  #hero { max-width: 520px; border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden; background: #fff; }
+  #hero svg { width: 100%; height: auto; display: block; }
+  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .tile { background: #fff; border: 1px solid #e4e4e4; border-radius: 8px; overflow: hidden; }
+  .tile svg { width: 100%; height: auto; display: block; }
+  .cap { padding: 6px 10px; color: #666; font-size: 11px; border-top: 1px solid #eee; }
+</style>
+</head>
+<body>
+  <h1>Warp Type — dev gallery</h1>
+  <div id="checks">running checks…</div>
+
+  <h2>Reference: default params</h2>
+  <div id="hero"></div>
+
+  <h2>Sweep</h2>
+  <div id="grid"></div>
+
+<script src="../dist/core.iife.js"></script>
+<script>
+  const { generate, DEFAULT_PARAMS, PALETTES, FONTS, SURFACES, PAD_FRACTION } = WarpTypeCore;
+
+  const failures = [];
+  const check = (name, ok) => { if (!ok) failures.push(name); };
+  let totalMs = 0;
+
+  function run(params, tag) {
+    const t0 = performance.now();
+    const a = generate(params);
+    totalMs += performance.now() - t0;
+    const b = generate(params);
+    check(`determinism ${tag}`, a.svg === b.svg);
+    check(`no NaN ${tag}`, !a.svg.includes('NaN'));
+    check(
+      `closed paths ${tag}`,
+      [...a.svg.matchAll(/ d="([^"]+)"/g)].every((m) => m[1].trim().endsWith('Z')),
+    );
+    const expected = params.text.replace(/[\n ]/g, '').length;
+    check(`letter count ${tag} (${a.glyphCount} vs ${expected})`, a.glyphCount === expected);
+    return a;
+  }
+
+  // 1. The default composition, big.
+  const hero = run(DEFAULT_PARAMS, 'hero');
+  document.getElementById('hero').innerHTML =
+    hero.svg.replace(/width="[\d.]+" height="[\d.]+"/, '');
+
+  // 2. A sweep across styles, faces, fits and surfaces.
+  const styles = ['color', 'shaded', 'bw'];
+  const fits = ['stretch', 'scale', 'none'];
+  const texts = [
+    'PLAQUE\nSABBATH\nMASTER\nOF\nCAVITY',
+    'HEAVY\nWEATHER',
+    'FLOW\nSTATE\nFOREVER',
+    'A',
+  ];
+  const grid = document.getElementById('grid');
+  for (let i = 0; i < 12; i++) {
+    const params = {
+      ...DEFAULT_PARAMS,
+      width: 420,
+      height: 420,
+      seed: 1000 + i * 77,
+      text: texts[i % texts.length],
+      style: styles[i % 3],
+      fit: fits[i % 3],
+      fontId: FONTS[i % FONTS.length].id,
+      surface: SURFACES[i % SURFACES.length].id,
+      themeId: PALETTES[i % PALETTES.length].id,
+      wave: [18, 38, 62, 88][i % 4],
+      folds: [0.8, 1.6, 2.7, 4.4][i % 4],
+      jitter: [0, 30, 60, 95][i % 4],
+      grain: [0, 28, 55][i % 3],
+      colorStrategy: ['byLine', 'byGlyph', 'single'][i % 3],
+    };
+    const tag = `${params.fontId}/${params.style}/${params.fit}/${params.surface}`;
+    const a = run(params, tag);
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+    tile.innerHTML =
+      a.svg.replace(/width="[\d.]+" height="[\d.]+"/, '') +
+      `<div class="cap">${a.glyphCount} letters · ${tag}<br>wave ${params.wave} · folds ${params.folds}` +
+      ` · jitter ${params.jitter} · grain ${a.grainCount} · ${params.themeId}</div>`;
+    grid.appendChild(tile);
+  }
+
+  // 3. Extremes: every slider at both ends, all surfaces, degenerate text.
+  const edge = (over) => ({ ...DEFAULT_PARAMS, width: 300, height: 300, ...over });
+  const edges = [
+    ['wave 0', edge({ wave: 0 })],
+    ['wave 100', edge({ wave: 100, folds: 6 })],
+    ['folds min', edge({ folds: 0.2 })],
+    ['swell 100', edge({ swell: 100 })],
+    ['lean 100', edge({ lean: 100, wave: 100 })],
+    ['jitter 100', edge({ jitter: 100 })],
+    ['tracking min', edge({ tracking: -12 })],
+    ['tracking max', edge({ tracking: 40 })],
+    ['leading min', edge({ lineGap: -25 })],
+    ['leading max', edge({ lineGap: 80 })],
+    ['grain 100', edge({ grain: 100 })],
+    ['stroke 12', edge({ strokeWidth: 12, style: 'bw' })],
+    ['one letter', edge({ text: 'A' })],
+    ['long line', edge({ text: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' })],
+    ['blank lines', edge({ text: 'A\n\n\nB' })],
+    ['spaces only', edge({ text: '   ' })],
+    ['unsupported', edge({ text: '日本語\nOK' })],
+    ['tiny canvas', edge({ width: 100, height: 100 })],
+    ['wide canvas', edge({ width: 1600, height: 300 })],
+    ['tall canvas', edge({ width: 300, height: 1600 })],
+    ...SURFACES.map((s) => [`surface ${s.id}`, edge({ surface: s.id, wave: 80 })]),
+    ...FONTS.map((f) => [`face ${f.id}`, edge({ fontId: f.id })]),
+  ];
+  for (const [tag, params] of edges) {
+    const t0 = performance.now();
+    const a = generate(params);
+    totalMs += performance.now() - t0;
+    check(`determinism ${tag}`, a.svg === generate(params).svg);
+    check(`no NaN ${tag}`, !a.svg.includes('NaN'));
+    check(`no Infinity ${tag}`, !a.svg.includes('Infinity'));
+    check(
+      `closed paths ${tag}`,
+      [...a.svg.matchAll(/ d="([^"]+)"/g)].every((m) => m[1].trim().endsWith('Z')),
+    );
+    // Nothing should escape the frame: the refit pass exists to guarantee this.
+    const coords = [...a.svg.matchAll(/[ML](-?[\d.]+) (-?[\d.]+)/g)];
+    const pad = Math.min(params.width, params.height) * PAD_FRACTION;
+    const out = coords.filter(
+      (m) =>
+        Number(m[1]) < pad - 1 ||
+        Number(m[1]) > params.width - pad + 1 ||
+        Number(m[2]) < pad - 1 ||
+        Number(m[2]) > params.height - pad + 1,
+    );
+    // Grain deliberately covers the whole canvas, so only check the letters.
+    const glyphSection = a.svg.slice(0, a.svg.indexOf('<g id="effects"') + 1 || undefined);
+    const glyphOut = out.filter((m) => m.index < glyphSection.length);
+    check(`inside frame ${tag} (${glyphOut.length} stray pts)`, glyphOut.length === 0);
+  }
+
+  const el = document.getElementById('checks');
+  if (failures.length === 0) {
+    el.className = 'pass';
+    el.textContent = `✅ all checks passed — ${13 + edges.length} compositions, ${totalMs.toFixed(0)}ms total generation`;
+  } else {
+    el.className = 'fail';
+    el.textContent = `❌ ${failures.length} failures:\n` + failures.slice(0, 40).join('\n');
+  }
+</script>
+</body>
+</html>

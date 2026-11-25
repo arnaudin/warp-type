@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  :root {
+    --bg: var(--figma-color-bg, #ffffff);
+    --fg: var(--figma-color-text, #1e1e1e);
+    --muted: var(--figma-color-text-secondary, #777);
+    --border: var(--figma-color-border, #e0e0e0);
+    --accent: var(--figma-color-bg-brand, #0d99ff);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font: 11px/1.4 Inter, 'Helvetica Neue', sans-serif;
+    color: var(--fg);
+    background: var(--bg);
+    padding: 12px 12px 0;
+    user-select: none;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Sized in ui.ts from the frame's aspect ratio so the border hugs the art. */
+  #preview {
+    flex: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    margin: 0 auto 10px;
+  }
+  #preview svg { width: 100%; height: 100%; display: block; }
+  .row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .row label { flex: 0 0 78px; color: var(--muted); }
+  .row input[type='range'] { flex: 1; }
+  .row select, .row input[type='number'] {
+    flex: 1; padding: 3px 6px; border: 1px solid var(--border);
+    border-radius: 4px; background: var(--bg); color: var(--fg); font: inherit;
+    min-width: 0;
+  }
+  .val { flex: 0 0 28px; text-align: right; color: var(--muted); }
+  .seg { display: flex; flex: 1; border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+  .seg button {
+    flex: 1; padding: 4px 0; border: 0; background: transparent;
+    color: var(--fg); font: inherit; cursor: pointer;
+  }
+  .seg button.on { background: var(--accent); color: #fff; }
+  #themes { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+  .swatch {
+    width: 34px; height: 22px; border-radius: 4px; cursor: pointer;
+    border: 2px solid transparent; display: flex; overflow: hidden;
+  }
+  .swatch.on { border-color: var(--accent); }
+  .swatch i { flex: 1; }
+  #text {
+    flex: none;
+    width: 100%; resize: vertical; min-height: 96px; margin-bottom: 8px;
+    padding: 6px 8px; border: 1px solid var(--border); border-radius: 5px;
+    background: var(--bg); color: var(--fg);
+    font: 600 12px/1.35 Inter, 'Helvetica Neue', sans-serif;
+    letter-spacing: 0.04em; text-transform: none;
+  }
+  #footer {
+    position: sticky;
+    bottom: 0;
+    margin-top: auto;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 10px 0 12px;
+  }
+  .actions { display: flex; gap: 8px; }
+  .actions button {
+    flex: 1; padding: 8px 0; border-radius: 6px; font: inherit; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border); background: var(--bg); color: var(--fg);
+  }
+  .actions button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  #meta { color: var(--muted); margin-top: 6px; text-align: center; }
+  #textWarning { color: var(--figma-color-text-warning, #b86200); margin: -4px 0 8px; }
+  .hide { display: none !important; }
+</style>
+</head>
+<body>
+  <div id="preview"></div>
+
+  <textarea id="text" spellcheck="false" rows="4">PLAQUE
+SABBATH
+MASTER
+OF
+CAVITY</textarea>
+  <div id="textWarning" class="hide"></div>
+
+  <div class="row"><label>Style</label>
+    <div class="seg" id="style">
+      <button data-v="color" class="on">Flat</button>
+      <button data-v="shaded">Shaded</button>
+      <button data-v="bw">Outline</button>
+    </div>
+  </div>
+  <div class="row" id="themeRow"><label>Theme</label><div id="themes"></div></div>
+  <div class="row"><label>Font</label><select id="fontId"></select></div>
+  <div class="row"><label>Fit</label>
+    <div class="seg" id="fit">
+      <button data-v="stretch" class="on">Stretch</button>
+      <button data-v="scale">Scale</button>
+      <button data-v="none">Plain</button>
+    </div>
+  </div>
+  <div class="row"><label>Surface</label><select id="surface"></select></div>
+  <div class="row"><label>Wave</label><input id="wave" type="range" min="0" max="100" step="1" value="22" /><span class="val" id="waveVal">22</span></div>
+  <div class="row"><label>Folds</label><input id="folds" type="range" min="0.2" max="6" step="0.1" value="1.6" /><span class="val" id="foldsVal">1.6</span></div>
+  <div class="row"><label>Swell</label><input id="swell" type="range" min="0" max="100" step="1" value="34" /><span class="val" id="swellVal">34</span></div>
+  <div class="row"><label>Lean</label><input id="lean" type="range" min="0" max="100" step="1" value="32" /><span class="val" id="leanVal">32</span></div>
+  <div class="row"><label>Jitter</label><input id="jitter" type="range" min="0" max="100" step="1" value="35" /><span class="val" id="jitterVal">35</span></div>
+  <div class="row"><label>Tracking</label><input id="tracking" type="range" min="-12" max="40" step="1" value="-2" /><span class="val" id="trackingVal">-2</span></div>
+  <div class="row"><label>Leading</label><input id="lineGap" type="range" min="-25" max="80" step="1" value="-3" /><span class="val" id="lineGapVal">-3</span></div>
+  <div class="row" id="grainRow"><label>Grain</label><input id="grain" type="range" min="0" max="100" step="1" value="28" /><span class="val" id="grainVal">28</span></div>
+  <div class="row" id="strategyRow"><label>Coloring</label><select id="colorStrategy"></select></div>
+  <div class="row"><label>Stroke</label><input id="strokeWidth" type="range" min="0" max="8" step="0.5" value="0" /><span class="val" id="strokeWidthVal">0</span></div>
+  <div class="row"><label>Size (px)</label>
+    <input id="width" type="number" min="100" max="4000" step="50" value="1000" />
+    <span style="color: var(--muted)">×</span>
+    <input id="height" type="number" min="100" max="4000" step="50" value="1000" />
+  </div>
+  <div class="row"><label>Seed</label><input id="seed" type="number" value="12345" /></div>
+
+  <div id="footer">
+    <div class="actions">
+      <button id="shuffle">🎲 Shuffle</button>
+      <button id="insertNew" class="hide" title="Add a new frame instead of updating the selected one">Insert new</button>
+      <button id="insert" class="primary">Insert into Figma</button>
+    </div>
+    <div id="meta"></div>
+  </div>
+
+<script>__UI_JS__</script>
+</body>
+</html>

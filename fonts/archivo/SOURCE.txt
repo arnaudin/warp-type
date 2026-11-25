@@ -1,0 +1,3 @@
+Archivo Black (SIL Open Font License 1.1)
+https://raw.githubusercontent.com/google/fonts/main/ofl/archivoblack/ArchivoBlack-Regular.ttf
+unmodified original; the derived subset lives in src/core/fonts/archivo.ts

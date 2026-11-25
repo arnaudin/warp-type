@@ -1,0 +1,3 @@
+Ultra (Apache License 2.0)
+https://raw.githubusercontent.com/google/fonts/main/apache/ultra/Ultra-Regular.ttf
+unmodified original; the derived subset lives in src/core/fonts/ultra.ts

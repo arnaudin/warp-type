@@ -1,0 +1,4 @@
+Bowlby One (SIL Open Font License 1.1)
+https://raw.githubusercontent.com/google/fonts/main/ofl/bowlbyone/BowlbyOne-Regular.ttf
+unmodified original; the derived subset lives in src/core/fonts/monolith.ts
+presented in this plugin as "Monolith" (reserved font name)
