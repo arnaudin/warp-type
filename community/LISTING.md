@@ -16,7 +16,7 @@ plugin itself. See "Regenerating the assets" at the bottom.
 
 ## Tagline
 
-    Display lettering warped onto rippling cloth. Every letter stays an editable vector.
+    Warp display lettering onto rippling cloth. Every letter exports as an editable vector.
 
 ## Category
 
@@ -26,49 +26,49 @@ Pick the closest match in the publish modal if that name has changed.
 
 ## Description
 
-**Warp Type sets headlines onto a rippling cloth surface.** Think of the swollen, bowing,
-hand-drawn lettering of a 1970s record sleeve, where letters lean with the folds, swell
-toward you, and crowd each other off the baseline.
+Warp Type bends headlines across a rippling cloth surface, inspired by the heavy,
+hand-drawn lettering on 1970s record sleeves. Letters tilt with the folds, stretch over
+the crests, and crowd into each other.
 
-**Every letter comes out as its own vector.** Not a live effect, not a flattened image:
-one closed path per letter, grouped by line. Select them, recolor them, boolean them,
-feed them into anything else in Figma. The preview is byte-for-byte what lands on the
-canvas, so what you dial in is what you get.
+Each letter is exported as its own closed vector path, grouped by line, so you can
+select, recolor, or boolean individual characters directly in Figma. The live preview in
+the plugin matches what gets placed on your canvas.
 
 ### Controls
 
-- **Fit:** *Stretch* holds one cap height and widens each line's letters to fill the
-  measure, so a five-letter word and a seven-letter word come out the same height *and*
-  the same width. *Scale* resizes whole lines instead, so short words tower over long
-  ones. *Plain* leaves every line at its natural width.
-- **Surface:** Cloth, Flag, Arch or Bulge.
-- **Wave, Folds, Swell, Lean:** how hard the fabric ripples, how many folds cross it,
-  how much it billows toward you, and how far letters tip with the slope beneath them.
-- **Jitter:** hand-lettered irregularity, with per-letter rotation, baseline bounce and
-  size drift.
-- **Tracking, Leading:** both go negative, so letters and lines can overlap the way
-  hand lettering does.
-- **Grain:** print speckle, added as two locked layers rather than two thousand nodes.
-- Four display faces, six palettes, three styles (Flat, Shaded, Outline), and a seed you
-  can shuffle until something lands.
+- **Fit:** *Stretch* keeps a single cap height and widens each line to match the full
+  width, so a 5-letter word and a 7-letter word end up the same height and width. *Scale*
+  resizes whole lines to fit (making short words larger than long ones). *Plain* leaves
+  every line at its natural width.
+- **Surface:** Choose between Cloth, Flag, Arch, or Bulge.
+- **Wave, Folds, Swell, Lean:** Control the ripple strength, number of folds, vertical
+  stretch, and how far letters tilt along the curve.
+- **Jitter:** Adds slight per-letter rotation, baseline shift, and size variation for a
+  hand-drawn feel.
+- **Tracking & Leading:** Both accept negative values if you want letters or lines to
+  overlap.
+- **Grain:** Adds print speckle across the artwork using two locked layers so it doesn't
+  clutter your layer list.
+- **Fonts, palettes & styles:** Includes 4 display fonts, 6 color palettes, 3 styles
+  (Flat, Shaded, Outline), and a seed shuffle button for trying variations.
 
-### Come back and edit it
+### Editing later
 
-Every generated frame stores its settings. Select it and the panel repopulates, or hit
-**Edit warped type** in the properties panel. Change the words, press **Update selected**,
-and it regenerates in place, keeping any letters you recolored by hand.
+Every generated frame saves its settings. Select a frame (or click **Edit warped type**
+in the right sidebar) to reload its controls, change the text or sliders, and hit
+**Update selected**. Any manual fill changes you made to individual letters are
+preserved.
 
-Same seed and same settings always produce the same artwork, so a composition you liked
-is never more than a seed away.
+Reusing the same seed and settings always gives you the exact same output.
 
 Free and open source: https://github.com/arnaudin/warp-type
 
 ### Typefaces
 
-Outlines are baked from four open-licensed faces. **Monolith** is derived from *Bowlby
-One* by Vernon Adams, **Archivo Black** by Omnibus-Type and **Modak** by Ek Type, all
-under the SIL Open Font License 1.1; **Ultra** by Brian J. Bonislawsky (Astigmatic) under
-Apache 2.0. Full license texts ship with the source.
+Glyph outlines are bundled from four open-licensed fonts: **Monolith** (derived from
+*Bowlby One* by Vernon Adams), **Archivo Black** (Omnibus-Type), and **Modak** (Ek Type)
+under the SIL Open Font License 1.1, plus **Ultra** by Brian J. Bonislawsky (Astigmatic)
+under Apache 2.0. Full license texts are included in the repository.
 
 ## Tags (up to 12)
 
@@ -77,8 +77,9 @@ Apache 2.0. Full license texts ship with the source.
 
 ## Release notes (v1.0.0)
 
-    First release. Four display faces, four cloth surfaces, six palettes, print grain,
-    and round-trip editing. Reopen any generated frame and regenerate it in place.
+    Initial release. Includes four display fonts, four warp surfaces, six color palettes,
+    print grain, and the ability to select any generated frame later to tweak and update
+    it in place.
 
 ## Support contact
 
