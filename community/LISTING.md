@@ -99,6 +99,7 @@ to network**. Nothing to fill in.
 | `warp-type-thumbnail.png` | 1920×1080 | Community thumbnail |
 | `warp-type-icon.png`  | 128×128  | Plugin icon |
 | `cover.svg`, `icon.svg` | n/a | Editable sources |
+| `carousel/warp-type-carousel-01` to `-09` | 1920×1080 | Carousel images, in upload order |
 
 ## Regenerating the assets
 
